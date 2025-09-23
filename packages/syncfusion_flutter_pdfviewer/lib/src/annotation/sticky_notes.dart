@@ -229,12 +229,7 @@ class RenderStickyNoteAnnotationView extends RenderInteractiveGraphicsView {
     _selectorStorkeWidth = selectorStorkeWidth;
 
     _doubleTapGestureRecognizer =
-        DoubleTapGestureRecognizer()
-          ..onDoubleTap = _onDoubleTap
-          ..gestureSettings = const DeviceGestureSettings(touchSlop: 0.0);
-    super.tapGestureRecognizer.gestureSettings = const DeviceGestureSettings(
-      touchSlop: 0.0,
-    );
+        DoubleTapGestureRecognizer()..onDoubleTap = _onDoubleTap;
     _strokePath = Path();
     _fillPath = Path();
   }

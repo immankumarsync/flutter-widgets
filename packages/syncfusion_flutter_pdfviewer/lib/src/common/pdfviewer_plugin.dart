@@ -42,6 +42,19 @@ class PdfViewerPlugin {
     return _originalWidth;
   }
 
+  /// Gets the page size of the specified page in the document.
+  Future<Size?> getPageSize(int pageNumber) async {
+    final List<double>? pageSize = await PdfViewerPlatform.instance.getPageSize(
+      pageNumber,
+      _documentID!,
+    );
+
+    if (pageSize != null && pageSize.length == 2) {
+      return Size(pageSize.first, pageSize.last);
+    }
+    return null;
+  }
+
   /// Dispose the rendered pages
   Future<void> closeDocument() async {
     imageCache.clear();

@@ -2278,16 +2278,16 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
       }
       _pdfViewerController.zoomLevel = widget.initialZoomLevel;
       _setInitialScrollOffset();
-      _getHeightCancellableOperation =
-          CancelableOperation<List<dynamic>?>.fromFuture(
-            _plugin.getPagesHeight(),
-          );
-      _originalHeight = await _getHeightCancellableOperation?.value;
-      _getWidthCancellableOperation =
-          CancelableOperation<List<dynamic>?>.fromFuture(
-            _plugin.getPagesWidth(),
-          );
-      _originalWidth = await _getWidthCancellableOperation?.value;
+      _originalWidth = <double>[];
+      _originalHeight = <double>[];
+      for (int pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
+        Size? pageSize = await _plugin.getPageSize(pageNumber);
+
+        if (pageSize != null) {
+          _originalWidth!.add(pageSize.width);
+          _originalHeight!.add(pageSize.height);
+        }
+      }
     } catch (e) {
       _pdfViewerController._reset();
       _hasError = true;

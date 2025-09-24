@@ -32,6 +32,15 @@ class MethodChannelPdfViewer extends PdfViewerPlatform {
     return _channel.invokeMethod('getPagesWidth', documentID);
   }
 
+  /// Gets the page size of the specified page in the document.
+  @override
+  Future<List<double>?> getPageSize(int pageNumber, String documentID) async {
+    return _channel.invokeMethod('getPageSize', <String, dynamic>{
+      'pageNumber': pageNumber,
+      'documentID': documentID,
+    });
+  }
+
   /// Gets the image bytes of the specified page from the document at the specified width and height.
   @override
   Future<Uint8List?> getPage(

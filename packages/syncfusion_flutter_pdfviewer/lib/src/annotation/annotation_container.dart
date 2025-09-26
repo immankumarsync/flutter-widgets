@@ -127,7 +127,7 @@ class _AnnotationContainerState extends State<AnnotationContainer> {
 
   Widget _getPositionedAnnotationView(Annotation annotation) {
     if (annotation is StickyNoteAnnotation) {
-      final double scaleFactor = _viewportSize.shortestSide >= 600 ? 2 : 1;
+      final double scaleFactor = _viewportSize.shortestSide >= 600 ? 2 : 1.25;
       return ListenableBuilder(
         listenable: annotation,
         builder: (BuildContext context, Widget? child) {

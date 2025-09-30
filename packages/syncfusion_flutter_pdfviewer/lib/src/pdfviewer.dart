@@ -4316,7 +4316,8 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
       _canInvokeOnTap &=
           draggedDistance.dx.abs() < kTouchSlop &&
           draggedDistance.dy.abs() < kTouchSlop;
-    } else if (event.kind == PointerDeviceKind.stylus) {
+    } else if (event.kind == PointerDeviceKind.stylus ||
+        event.kind == PointerDeviceKind.invertedStylus) {
       final double kStylusSlop = kTouchSlop / 3;
       _canInvokeOnTap &=
           draggedDistance.dx.abs() < kStylusSlop &&

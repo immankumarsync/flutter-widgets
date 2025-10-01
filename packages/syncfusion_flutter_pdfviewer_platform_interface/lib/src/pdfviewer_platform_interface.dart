@@ -54,11 +54,6 @@ abstract class PdfViewerPlatform extends PlatformInterface {
     throw UnimplementedError('getPagesWidth() has not been implemented.');
   }
 
-  /// Gets the page size of the specified page in the document.
-  Future<List<double>?> getPageSize(int pageNumber, String documentID) async {
-    throw UnimplementedError('getPageSize() has not been implemented.');
-  }
-
   /// Gets the image's bytes information of the specified page.
   Future<Uint8List?> getImage(
     int pageNumber,

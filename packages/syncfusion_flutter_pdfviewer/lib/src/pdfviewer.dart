@@ -1205,8 +1205,8 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
   CancelableOperation<PdfDocument?>? _pdfDocumentLoadCancellableOperation;
   CancelableOperation<List<dynamic>?>? _getHeightCancellableOperation,
       _getWidthCancellableOperation;
-  List<dynamic>? _originalHeight;
-  List<dynamic>? _originalWidth;
+  List<double>? _originalHeight;
+  List<double>? _originalWidth;
   double? _viewportHeightInLandscape;
   double? _otherContextHeight;
   double _maxPdfPageWidth = 0.0;
@@ -2280,13 +2280,11 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
       _setInitialScrollOffset();
       _originalWidth = <double>[];
       _originalHeight = <double>[];
-      for (int pageNumber = 1; pageNumber <= pageCount; pageNumber++) {
-        Size? pageSize = await _plugin.getPageSize(pageNumber);
+      for (int pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+        final Size pageSize = _document!.pages[pageIndex].size;
 
-        if (pageSize != null) {
-          _originalWidth!.add(pageSize.width);
-          _originalHeight!.add(pageSize.height);
-        }
+        _originalWidth!.add(pageSize.width);
+        _originalHeight!.add(pageSize.height);
       }
     } catch (e) {
       _pdfViewerController._reset();
@@ -3446,10 +3444,9 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
   }
 
   /// Find whether device is mobile or tablet.
-  Future<void> _findDevice(BuildContext context) async {
+  Future<void> _findDevice(Size size) async {
     /// Standard diagonal offset of tablet.
     const double kPdfStandardDiagonalOffset = 1100.0;
-    final Size size = MediaQuery.of(context).size;
     final double diagonal = sqrt(
       (size.width * size.width) + (size.height * size.height),
     );
@@ -3569,12 +3566,12 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    /// Find whether device is mobile or Laptop.
-    _findDevice(context);
     final bool isPdfLoaded =
         _pdfViewerController.pageCount > 0 &&
         _originalWidth != null &&
-        _originalHeight != null;
+        _originalHeight != null &&
+        _originalWidth!.length == _pdfViewerController.pageCount &&
+        _originalHeight!.length == _pdfViewerController.pageCount;
     _pdfDimension =
         _childKey.currentContext?.findRenderObject()?.paintBounds.size ??
         Size.zero;
@@ -3596,6 +3593,9 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
                 _viewportConstraints = constraints;
                 if (_viewportSize != _viewportConstraints.biggest) {
                   _viewportSize = _viewportConstraints.biggest;
+
+                  /// Find whether device is mobile or Laptop.
+                  _findDevice(_viewportSize);
                   _getTileImage();
                 }
                 double totalHeight = 0.0;
@@ -3672,8 +3672,8 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
                   final int pageIndex = index + 1;
                   final Size calculatedSize = _calculateSize(
                     BoxConstraints(maxWidth: _viewportConstraints.maxWidth),
-                    _originalWidth![index].toDouble(),
-                    _originalHeight![index].toDouble(),
+                    _originalWidth![index],
+                    _originalHeight![index],
                     _viewportConstraints.maxWidth,
                     viewportDimension.height,
                   );
@@ -3681,9 +3681,8 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
                     _pdfPagesKey[pageIndex] = GlobalKey();
                   }
                   if (kIsDesktop && !_isMobileView) {
-                    if (_originalWidth![index].toDouble() > _maxPdfPageWidth !=
-                        null) {
-                      _maxPdfPageWidth = _originalWidth![index].toDouble();
+                    if (_originalWidth![index] > _maxPdfPageWidth) {
+                      _maxPdfPageWidth = _originalWidth![index];
                     }
                   }
 

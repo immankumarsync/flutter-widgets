@@ -64,9 +64,6 @@ public class SyncfusionFlutterPdfViewerPlugin implements FlutterPlugin, MethodCa
             case "getPagesHeight":
                 getPagesHeight(call, result);
                 break;
-            case "getPageSize":
-                getPageSize(call, result);
-                break;
             case "closeDocument":
                 closeDocument(call, result);
                 break;
@@ -227,33 +224,6 @@ public class SyncfusionFlutterPdfViewerPlugin implements FlutterPlugin, MethodCa
                 result.success(pageHeight);
             } catch (Exception e) {
                 result.error("PAGE_HEIGHT_ERROR", e.getMessage(), null);
-            }
-        });
-    }
-
-    private void getPageSize(MethodCall call, Result result) {
-        String documentID = call.argument("documentID");
-        int pageNumber = call.argument("pageNumber");
-        PdfFileRenderer fileRenderer = documentRepo.get(documentID);
-        if (fileRenderer == null) {
-            result.error("DOCUMENT_NOT_FOUND", "Document with ID " + documentID + " not found", null);
-            return;
-        }
-        int pageCount = fileRenderer.renderer.getPageCount();
-        if(pageNumber < 0 || pageNumber > pageCount){
-            result.error("INVALID_PAGE_NUMBER", "Page number is zero or negative or exceeds the page count", null);
-            return;
-        }
-        executorService.execute(() -> {
-            try {
-                double[] pageSize = new double[2];
-                try (PdfRenderer.Page page = fileRenderer.renderer.openPage(pageNumber - 1)) {
-                    pageSize[0] = page.getWidth();
-                    pageSize[1] = page.getHeight();
-                }
-                result.success(pageSize);
-            } catch (Exception e) {
-                result.error("PAGE_SIZE_ERROR", e.getMessage(), null);
             }
         });
     }

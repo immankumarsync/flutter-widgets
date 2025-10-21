@@ -2397,17 +2397,7 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
   /// Perform text extraction for mobile, windows and macOS platforms.
   Future<void> _performTextExtraction() async {
     if (_document != null && _document!.pages.count > 0) {
-      _textExtractionEngine = TextExtractionEngine(_document!);
-
-      _textExtractionEngine!.extractText().then((Map<int, String> value) {
-        _extractedTextCollection.addAll(value);
-        _isTextExtractionCompleted = true;
-        if (_pdfViewerController._searchText.isNotEmpty) {
-          _pdfViewerController._notifyPropertyChangedListeners(
-            property: 'searchText',
-          );
-        }
-      });
+      _isTextExtractionCompleted = true;
     }
   }
 
@@ -5887,13 +5877,9 @@ class SfPdfViewerState extends State<SfPdfViewer> with WidgetsBindingObserver {
         setState(() {});
       } else {
         if (_isTextExtractionCompleted) {
-          final String searchText =
-              _pdfViewerController._searchText.toLowerCase();
-          _extractedTextCollection.forEach((int key, String value) {
-            if (value.contains(searchText)) {
-              _matchedTextPageIndices.add(key);
-            }
-          });
+          _matchedTextPageIndices.addAll(
+            List.generate(_pdfViewerController._pageCount, (index) => index),
+          );
           _performTextSearch();
         }
       }
